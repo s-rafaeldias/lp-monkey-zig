@@ -16,21 +16,18 @@ const Lexer = struct {
     }
 
     pub fn nextToken(self: *Lexer) Token {
-        std.debug.print("Antes: {}\n", .{self});
         const token: Token = switch (self.ch) {
-            '=' => .{ .ttype = TokenType.Assign, .value = "=" },
-            ';' => .{ .ttype = TokenType.Semicolon, .value = ";" },
-            '(' => .{ .ttype = TokenType.LParen, .value = "(" },
-            ')' => .{ .ttype = TokenType.RParen, .value = ")" },
-            ',' => .{ .ttype = TokenType.Comma, .value = "," },
-            '+' => .{ .ttype = TokenType.Plus, .value = "+" },
-            '{' => .{ .ttype = TokenType.LBrace, .value = "{" },
-            '}' => .{ .ttype = TokenType.RBrace, .value = "}" },
-            0 => .{ .ttype = TokenType.Eof, .value = "" },
-            else => .{ .ttype = TokenType.Eof, .value = "" },
+            '=' => .{ .type = TokenType.Assign, .value = "=" },
+            ';' => .{ .type = TokenType.Semicolon, .value = ";" },
+            '(' => .{ .type = TokenType.LParen, .value = "(" },
+            ')' => .{ .type = TokenType.RParen, .value = ")" },
+            ',' => .{ .type = TokenType.Comma, .value = "," },
+            '+' => .{ .type = TokenType.Plus, .value = "+" },
+            '{' => .{ .type = TokenType.LBrace, .value = "{" },
+            '}' => .{ .type = TokenType.RBrace, .value = "}" },
+            0 => .{ .type = TokenType.Eof, .value = "" },
+            else => unreachable,
         };
-        std.debug.print("Token: {}\n", .{token});
-        std.debug.print("Depois: {}\n", .{self});
 
         self.readChar();
 
@@ -53,15 +50,15 @@ test "next token" {
     const input = "=+(){},;";
 
     const tt = [_]Token{
-        .{ .ttype = TokenType.Assign, .value = "=" },
-        .{ .ttype = TokenType.Plus, .value = "+" },
-        .{ .ttype = TokenType.LParen, .value = "(" },
-        .{ .ttype = TokenType.RParen, .value = ")" },
-        .{ .ttype = TokenType.LBrace, .value = "{" },
-        .{ .ttype = TokenType.RBrace, .value = "}" },
-        .{ .ttype = TokenType.Comma, .value = "," },
-        .{ .ttype = TokenType.Semicolon, .value = ";" },
-        .{ .ttype = TokenType.Eof, .value = "" },
+        .{ .type = TokenType.Assign, .value = "=" },
+        .{ .type = TokenType.Plus, .value = "+" },
+        .{ .type = TokenType.LParen, .value = "(" },
+        .{ .type = TokenType.RParen, .value = ")" },
+        .{ .type = TokenType.LBrace, .value = "{" },
+        .{ .type = TokenType.RBrace, .value = "}" },
+        .{ .type = TokenType.Comma, .value = "," },
+        .{ .type = TokenType.Semicolon, .value = ";" },
+        .{ .type = TokenType.Eof, .value = "" },
     };
 
     var l = Lexer.init(input);
@@ -69,7 +66,7 @@ test "next token" {
     for (tt) |expected| {
         const actual: Token = l.nextToken();
 
-        try testing.expectEqual(expected.ttype, actual.ttype);
+        try testing.expectEqual(expected.type, actual.type);
         try testing.expectEqualStrings(expected.value, actual.value);
     }
 }
@@ -86,55 +83,55 @@ test "next token" {
 //
 //     const tt = [_]Token{
 //         // let five = 5;
-//         .{ .ttype = TokenType.Let, .value = "let" },
-//         .{ .ttype = TokenType.Identifier, .value = "five" },
-//         .{ .ttype = TokenType.Assign, .value = "=" },
-//         .{ .ttype = TokenType.Int, .value = "5" },
-//         .{ .ttype = TokenType.Semicolon, .value = ";" },
+//         .{ .type = TokenType.Let, .value = "let" },
+//         .{ .type = TokenType.Identifier, .value = "five" },
+//         .{ .type = TokenType.Assign, .value = "=" },
+//         .{ .type = TokenType.Int, .value = "5" },
+//         .{ .type = TokenType.Semicolon, .value = ";" },
 //         // let ten = 10;
-//         .{ .ttype = TokenType.Let, .value = "let" },
-//         .{ .ttype = TokenType.Identifier, .value = "five" },
-//         .{ .ttype = TokenType.Assign, .value = "=" },
-//         .{ .ttype = TokenType.Int, .value = "10" },
-//         .{ .ttype = TokenType.Semicolon, .value = ";" },
+//         .{ .type = TokenType.Let, .value = "let" },
+//         .{ .type = TokenType.Identifier, .value = "five" },
+//         .{ .type = TokenType.Assign, .value = "=" },
+//         .{ .type = TokenType.Int, .value = "10" },
+//         .{ .type = TokenType.Semicolon, .value = ";" },
 //         // let add = fn(x, y) {
-//         .{ .ttype = TokenType.Let, .value = "let" },
-//         .{ .ttype = TokenType.Identifier, .value = "add" },
-//         .{ .ttype = TokenType.Assign, .value = "=" },
-//         .{ .ttype = TokenType.Function, .value = "fn" },
-//         .{ .ttype = TokenType.LParen, .value = "(" },
-//         .{ .ttype = TokenType.Identifier, .value = "five" },
-//         .{ .ttype = TokenType.Comma, .value = "," },
-//         .{ .ttype = TokenType.Identifier, .value = "ten" },
-//         .{ .ttype = TokenType.RParen, .value = ")" },
-//         .{ .ttype = TokenType.LBrace, .value = "{" },
+//         .{ .type = TokenType.Let, .value = "let" },
+//         .{ .type = TokenType.Identifier, .value = "add" },
+//         .{ .type = TokenType.Assign, .value = "=" },
+//         .{ .type = TokenType.Function, .value = "fn" },
+//         .{ .type = TokenType.LParen, .value = "(" },
+//         .{ .type = TokenType.Identifier, .value = "five" },
+//         .{ .type = TokenType.Comma, .value = "," },
+//         .{ .type = TokenType.Identifier, .value = "ten" },
+//         .{ .type = TokenType.RParen, .value = ")" },
+//         .{ .type = TokenType.LBrace, .value = "{" },
 //         // x + y;
-//         .{ .ttype = TokenType.Identifier, .value = "x" },
-//         .{ .ttype = TokenType.Plus, .value = "+" },
-//         .{ .ttype = TokenType.Identifier, .value = "y" },
-//         .{ .ttype = TokenType.Semicolon, .value = ";" },
+//         .{ .type = TokenType.Identifier, .value = "x" },
+//         .{ .type = TokenType.Plus, .value = "+" },
+//         .{ .type = TokenType.Identifier, .value = "y" },
+//         .{ .type = TokenType.Semicolon, .value = ";" },
 //         // };
-//         .{ .ttype = TokenType.RBrace, .value = "}" },
-//         .{ .ttype = TokenType.Semicolon, .value = ";" },
+//         .{ .type = TokenType.RBrace, .value = "}" },
+//         .{ .type = TokenType.Semicolon, .value = ";" },
 //         // let result = add(five, ten);
-//         .{ .ttype = TokenType.Let, .value = "let" },
-//         .{ .ttype = TokenType.Identifier, .value = "result" },
-//         .{ .ttype = TokenType.Assign, .value = "=" },
-//         .{ .ttype = TokenType.Identifier, .value = "add" },
-//         .{ .ttype = TokenType.LParen, .value = "(" },
-//         .{ .ttype = TokenType.Identifier, .value = "five" },
-//         .{ .ttype = TokenType.Comma, .value = "," },
-//         .{ .ttype = TokenType.Identifier, .value = "ten" },
-//         .{ .ttype = TokenType.RParen, .value = ")" },
-//         .{ .ttype = TokenType.Semicolon, .value = ";" },
-//         .{ .ttype = TokenType.Eof, .value = "" },
+//         .{ .type = TokenType.Let, .value = "let" },
+//         .{ .type = TokenType.Identifier, .value = "result" },
+//         .{ .type = TokenType.Assign, .value = "=" },
+//         .{ .type = TokenType.Identifier, .value = "add" },
+//         .{ .type = TokenType.LParen, .value = "(" },
+//         .{ .type = TokenType.Identifier, .value = "five" },
+//         .{ .type = TokenType.Comma, .value = "," },
+//         .{ .type = TokenType.Identifier, .value = "ten" },
+//         .{ .type = TokenType.RParen, .value = ")" },
+//         .{ .type = TokenType.Semicolon, .value = ";" },
+//         .{ .type = TokenType.Eof, .value = "" },
 //     };
 //
 //     var l = Lexer.init(input);
 //
 //     for (tt) |expected| {
 //         const actual = l.nextToken();
-//         try testing.expectEqual(expected.ttype, actual.ttype);
+//         try testing.expectEqual(expected.type, actual.type);
 //         try testing.expectEqualStrings(expected.value, actual.value);
 //     }
 // }

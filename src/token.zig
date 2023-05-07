@@ -20,6 +20,6 @@ pub const TokenType = enum {
 };
 
 pub const Token = struct {
-    ttype: TokenType,
+    type: TokenType,
     value: []const u8,
 };
